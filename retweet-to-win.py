@@ -22,18 +22,22 @@ auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_token_secret)
 api = tweepy.API(auth)
 
-# Search for tweets containing the text "Retweet to win"
-query = "Retweet to win"
+# Queries to search tweets for. You can add more queries if you want.
+queries = ["Retweet to win", "Giveaway", "Follow to win", "Like to win"]
 
 while True:
-    # Retweet and follow any tweets that match the search query
-    for tweet in api.search_tweets(query):
-        try:
-            api.retweet(tweet.id)
-            api.create_favorite(id=tweet.id)
-            #api.create_friendship(tweet.user.screen_name, tweet.user.id, follow=False)
-            api.create_friendship(user_id=tweet.user.id)
-            print("Retweeted, liked and followed user: ", tweet.user.id)
-        except tweepy.TweepyException as error:
-            print("Error: ", error)
-    time.sleep(3600) #Sleep for a hour to prevent rate limiting by twitter. A longer sleep would likely be better to allow for more new tweets.
+    #Iterate over the queries
+    for query in queries:
+    # Search for tweets containing the current query text
+        for tweet in api.search_tweets(query):
+            try:
+                print("Searching for query: ", query)
+            # Retweet and follow the user who posted the tweet
+                api.retweet(tweet.id)
+                api.create_favorite(id=tweet.id)
+                api.create_friendship(user_id=tweet.user.id)
+                print("Retweeted, liked and followed user: ", tweet.user.screen_name)
+            except tweepy.TweepyException as error:
+                print("Error: ", error)
+    time.sleep(2700) #Sleep for fourty-five minutes to allow for new tweets. Could be optimized.
+
